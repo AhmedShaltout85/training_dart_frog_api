@@ -1,0 +1,11 @@
+@BASE_IP = http://localhost:8080
+@ITEMS_END_POINT = /api/v1/items
+@LISTS_END_POINT = /api/v1/lists
+
+
+###
+curl --request GET --url {{BASE_IP}}
+###
+curl --request GET --url {{BASE_IP}}{{ITEMS_END_POINT}}
+###
+curl --request GET --url {{BASE_IP}}{{LISTS_END_POINT}}
