@@ -1,5 +1,7 @@
+import 'package:equatable/equatable.dart';
+
 ///Item model
-class Item {
+class Item extends Equatable{
   ///Item constructor
   Item({
     required this.id,
@@ -47,4 +49,7 @@ class Item {
       description: description ?? this.description,
     );
   }
+  
+  @override
+  List<Object?> get props => [id, name, description];
 }
