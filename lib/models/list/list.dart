@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-///TaskLists list map data source in-memory cache
-Map<String, TaskList> taskListsDb = {};
 
 //// TaskList model
 class TaskList extends Equatable {

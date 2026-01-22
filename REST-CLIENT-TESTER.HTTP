@@ -1,11 +1,395 @@
 @BASE_IP = http://localhost:8080
 @ITEMS_END_POINT = /api/v1/items
 @LISTS_END_POINT = /api/v1/lists
+@LIST_ID = list_001
+@ITEM_ID = item_001
 
+# ============================================
+# LISTS ENDPOINT TESTS
+# ============================================
+
+### Get all lists
+GET {{BASE_IP}}{{LISTS_END_POINT}}
+Content-Type: application/json
+
+### Get single list by ID
+GET {{BASE_IP}}{{LISTS_END_POINT}}?id={{LIST_ID}}
+Content-Type: application/json
+
+### Create a new list
+POST {{BASE_IP}}{{LISTS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "{{LIST_ID}}",
+    "title": "My Shopping List"
+}
+
+### Create another list with different ID
+POST {{BASE_IP}}{{LISTS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "list_002",
+    "title": "Work Tasks"
+}
+
+### Create list with auto-generated ID (example)
+POST {{BASE_IP}}{{LISTS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "list_{{$timestamp}}",
+    "title": "Dynamic List {{$randomInt}}"
+}
+
+### Update an existing list
+PUT {{BASE_IP}}{{LISTS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "{{LIST_ID}}",
+    "title": "Updated Shopping List"
+}
+
+### Delete a list
+DELETE {{BASE_IP}}{{LISTS_END_POINT}}?id={{LIST_ID}}
+Content-Type: application/json
+
+# ============================================
+# ITEMS ENDPOINT TESTS
+# ============================================
+
+### Get all items (empty at first)
+GET {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+### Get single item by ID (will return 404 initially)
+GET {{BASE_IP}}{{ITEMS_END_POINT}}?id={{ITEM_ID}}
+Content-Type: application/json
+
+### Create a new item
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "{{ITEM_ID}}",
+    "name": "Buy Groceries",
+    "description": "Weekly grocery shopping"
+}
+
+### Create another item with different ID
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "item_002",
+    "name": "Finish Report",
+    "description": "Complete quarterly report"
+}
+
+### Create item with auto-generated ID
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "item_{{$timestamp}}",
+    "name": "Dynamic Item {{$randomInt}}",
+    "description": "Auto-generated item for testing"
+}
+
+### Update an existing item
+PUT {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "{{ITEM_ID}}",
+    "name": "Buy Groceries Updated",
+    "description": "Updated description for grocery shopping"
+}
+
+### Delete an item
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id={{ITEM_ID}}
+Content-Type: application/json
+
+# ============================================
+# ITEMS EDGE CASES & ERROR HANDLING TESTS
+# ============================================
+
+### Try to create item without ID (should fail)
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "name": "Item without ID",
+    "description": "This should fail"
+}
+
+### Try to create item with empty ID (should fail)
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "",
+    "name": "Empty ID Item",
+    "description": "This should fail too"
+}
+
+### Try to create item with missing fields (should fail)
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "incomplete_item",
+    "name": "Missing Description"
+}
+
+### Try to create duplicate item (should fail if implemented)
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "item_002",
+    "name": "Duplicate Item",
+    "description": "This is a duplicate"
+}
+
+### Try to get non-existent item (should return 404)
+GET {{BASE_IP}}{{ITEMS_END_POINT}}?id=nonexistent_item
+Content-Type: application/json
+
+### Try to update non-existent item (should return 404)
+PUT {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "nonexistent_item",
+    "name": "Update Non-existent",
+    "description": "This item doesn't exist"
+}
+
+### Try to delete without ID (should return 400)
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+### Try to delete non-existent item (should return 404)
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id=nonexistent_item
+Content-Type: application/json
+
+# ============================================
+# ITEMS WORKFLOW TESTS
+# ============================================
+
+### Test 1: Complete CRUD workflow for items
+### Step 1: Create a test item
+# @name createTestItem
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "workflow_item",
+    "name": "Workflow Test Item",
+    "description": "Testing the complete workflow"
+}
+
+### Step 2: Verify creation
+GET {{BASE_IP}}{{ITEMS_END_POINT}}?id=workflow_item
+Content-Type: application/json
+
+### Step 3: Get all items to verify
+GET {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+### Step 4: Update the item
+PUT {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "workflow_item",
+    "name": "Updated Workflow Item",
+    "description": "Updated description for workflow test"
+}
+
+### Step 5: Verify update
+GET {{BASE_IP}}{{ITEMS_END_POINT}}?id=workflow_item
+Content-Type: application/json
+
+### Step 6: Delete the item
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id=workflow_item
+Content-Type: application/json
+
+### Step 7: Verify deletion
+GET {{BASE_IP}}{{ITEMS_END_POINT}}?id=workflow_item
+Content-Type: application/json
+
+# ============================================
+# ITEMS BATCH OPERATIONS TEST
+# ============================================
+
+### Create multiple items in sequence
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "batch_item_1",
+    "name": "Batch Item 1",
+    "description": "First batch item"
+}
 
 ###
-curl --request GET --url {{BASE_IP}}
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "batch_item_2",
+    "name": "Batch Item 2",
+    "description": "Second batch item"
+}
+
 ###
-curl --request GET --url {{BASE_IP}}{{ITEMS_END_POINT}}
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "batch_item_3",
+    "name": "Batch Item 3",
+    "description": "Third batch item"
+}
+
+### Get all items to see batch results
+GET {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+# ============================================
+# ITEMS PERFORMANCE/LOAD TEST (Simple)
+# ============================================
+
+### Create multiple items quickly
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "perf_item_{{$randomInt 1000 9999}}",
+    "name": "Performance Item {{$randomInt 100 999}}",
+    "description": "Auto-generated performance test item"
+}
+
+### Get all items to check performance
+GET {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+# ============================================
+# ITEMS VALIDATION TESTS
+# ============================================
+
+### Test with different data types (should handle gracefully)
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": 123,  // Number instead of string
+    "name": "Number ID",
+    "description": "Testing with number ID"
+}
+
+### Test with special characters
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "item_special_!@#$",
+    "name": "Special & Characters",
+    "description": "Testing with: & < > \" '"
+}
+
+### Test with very long values
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "long_id_" + "x".repeat(50),
+    "name": "A".repeat(100),
+    "description": "B".repeat(500)
+}
+
+# ============================================
+# COMBINED LISTS & ITEMS WORKFLOW
+# ============================================
+
+### Combined workflow: Create list, then create items
+### Step 1: Create a list for items
+POST {{BASE_IP}}{{LISTS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "combined_list",
+    "title": "Combined Test List"
+}
+
+### Step 2: Create items that might belong to this list
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "combined_item_1",
+    "name": "Item for Combined List",
+    "description": "This item might be related to the list"
+}
+
 ###
-curl --request GET --url {{BASE_IP}}{{LISTS_END_POINT}}
+POST {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+{
+    "id": "combined_item_2",
+    "name": "Another Item for Combined List",
+    "description": "Second item for the combined workflow"
+}
+
+### Step 3: Verify both endpoints work independently
+GET {{BASE_IP}}{{LISTS_END_POINT}}?id=combined_list
+Content-Type: application/json
+
+###
+GET {{BASE_IP}}{{ITEMS_END_POINT}}
+Content-Type: application/json
+
+# ============================================
+# CLEANUP (Optional - remove test data)
+# ============================================
+
+### Cleanup batch items
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id=batch_item_1
+Content-Type: application/json
+
+###
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id=batch_item_2
+Content-Type: application/json
+
+###
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id=batch_item_3
+Content-Type: application/json
+
+### Cleanup combined test data
+DELETE {{BASE_IP}}{{LISTS_END_POINT}}?id=combined_list
+Content-Type: application/json
+
+###
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id=combined_item_1
+Content-Type: application/json
+
+###
+DELETE {{BASE_IP}}{{ITEMS_END_POINT}}?id=combined_item_2
+Content-Type: application/json
+
+### Delete batch test lists (from original file)
+DELETE {{BASE_IP}}{{LISTS_END_POINT}}?id=batch_1
+Content-Type: application/json
+
+###
+DELETE {{BASE_IP}}{{LISTS_END_POINT}}?id=batch_2
+Content-Type: application/json
+
+###
+DELETE {{BASE_IP}}{{LISTS_END_POINT}}?id=batch_3
+Content-Type: application/json
