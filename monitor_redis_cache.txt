@@ -1,0 +1,21 @@
+# Connect to Redis CLI
+docker exec -it redis-server redis-cli
+
+# View all keys
+127.0.0.1:6379> KEYS *
+
+# View specific cached data
+127.0.0.1:6379> GET lists:all
+127.0.0.1:6379> GET list:1
+127.0.0.1:6379> GET items:all
+127.0.0.1:6379> GET item:1
+
+# Check TTL (time to live)
+127.0.0.1:6379> TTL lists:all
+127.0.0.1:6379> TTL items:all
+
+# Clear specific cache
+127.0.0.1:6379> DEL lists:all
+
+# Clear all cache (use with caution!)
+127.0.0.1:6379> FLUSHALL

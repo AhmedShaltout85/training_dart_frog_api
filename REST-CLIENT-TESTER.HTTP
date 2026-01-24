@@ -393,3 +393,21 @@ Content-Type: application/json
 ###
 DELETE {{BASE_IP}}{{LISTS_END_POINT}}?id=batch_3
 Content-Type: application/json
+
+
+==============================================
+### Basic health check(Redis)
+curl http://localhost:8080/health
+
+### Pretty print JSON response
+curl -s http://localhost:8080/health | jq .
+
+###Save response to file
+curl http://localhost:8080/health > health_check.json
+```
+
+### Option B: Using a Web Browser
+
+###Simply open your browser and navigate to:
+```
+http://localhost:8080/health
