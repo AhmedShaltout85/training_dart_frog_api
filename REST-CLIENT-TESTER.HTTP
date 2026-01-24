@@ -466,31 +466,6 @@ GET {{BASE_IP}}/health
 Content-Type: application/json
 
 
-### Cache Statistics
-GET {{BASE_IP}}/{{API_VERSION}}/cache-stats
-Content-Type: application/json
 
 
-### Clear All Cache
-POST {{BASE_IP}}/{{API_VERSION}}/cache-clear
-Content-Type: application/json
 
-{}
-
-
-### Clear List Cache Pattern
-POST {{BASE_IP}}/{{API_VERSION}}/cache-clear
-Content-Type: application/json
-
-{
-  "pattern": "list*"
-}
-
-
-### Clear Item Cache Pattern
-POST {{BASE_IP}}/{{API_VERSION}}/cache-clear
-Content-Type: application/json
-
-{
-  "pattern": "item*"
-}
