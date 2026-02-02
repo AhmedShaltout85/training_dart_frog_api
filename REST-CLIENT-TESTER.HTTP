@@ -484,4 +484,4 @@ PUT {{BASE_IP}}/3
 
 ### DELETE record
 
-DELETE {{BASE_IP}}/5
+DELETE {{BASE_IP}}/3

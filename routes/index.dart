@@ -2,15 +2,30 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 
-Response onRequest(RequestContext context) {
-  return switch (context.request.method) {
-    HttpMethod.get => _getRoot(context),
-    HttpMethod.post => _addRequest(context),
-    _ => Response(
+// Response onRequest(RequestContext context) {
+//   return switch (context.request.method) {
+//     HttpMethod.get => _getRoot(context),
+//     HttpMethod.post => _addRequest(context),
+//     _ => Response(
+//         statusCode: HttpStatus.methodNotAllowed,
+//         body: 'Method not allowed',
+//       ),
+//   };
+// }
+
+Future<Response> onRequest(RequestContext context) async {
+  switch (context.request.method) {
+    case HttpMethod.get:
+      return _getRoot(context);
+    case HttpMethod.post:
+      return _addRequest(context);
+    // ignore: no_default_cases
+    default:
+      return Response(
         statusCode: HttpStatus.methodNotAllowed,
         body: 'Method not allowed',
-      ),
-  };
+      );
+  }
 }
 
 Response _getRoot(RequestContext context) {
