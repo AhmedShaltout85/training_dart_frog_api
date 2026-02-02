@@ -472,16 +472,16 @@ Content-Type: application/json
 ### Initial Route /index.dart
 
 ### GET all
-GET {{BASE_IP}}
+GET {{BASE_IP}}/statics
 
 ### CREATE new record
 
-POST {{BASE_IP}}
+POST {{BASE_IP}}/statics
 
 ### NOT ALLOWED 
 
-PUT {{BASE_IP}}/3
+PUT {{BASE_IP}}/statics/3
 
 ### DELETE record
 
-DELETE {{BASE_IP}}/3
+DELETE {{BASE_IP}}/statics/3
