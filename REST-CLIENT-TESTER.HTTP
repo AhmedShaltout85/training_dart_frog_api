@@ -469,3 +469,19 @@ Content-Type: application/json
 
 
 
+### Initial Route /index.dart
+
+### GET all
+GET {{BASE_IP}}
+
+### CREATE new record
+
+POST {{BASE_IP}}
+
+### NOT ALLOWED 
+
+PUT {{BASE_IP}}/3
+
+### DELETE record
+
+DELETE {{BASE_IP}}/5
