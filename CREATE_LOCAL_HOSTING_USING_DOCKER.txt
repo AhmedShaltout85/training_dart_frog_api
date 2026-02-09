@@ -1,0 +1,101 @@
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api$dart_frog build && cd build
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ docker build -t dart-frog .
+Sending build context to Docker daemon  111.6kB
+Step 1/12 : FROM dart:stable AS build
+stable: Pulling from library/dart
+0c8d55a45c0d: Pull complete 
+8e9a5a94802c: Pull complete 
+aa8a6067c0bf: Pull complete 
+4f4fb700ef54: Pull complete 
+ff19372cd494: Pull complete 
+Digest: sha256:a4961c8c5c389d04f60ffe8b899c3b4b4827b726fa7a7297d85290b7ebb0f82a
+Status: Downloaded newer image for dart:stable
+ ---> c22bbd8e7f3c
+Step 2/12 : WORKDIR /app
+ ---> Running in 18459b8e4906
+Removing intermediate container 18459b8e4906
+ ---> a6a219fba472
+Step 3/12 : COPY pubspec.* ./
+ ---> 38eb228df66a
+Step 4/12 : RUN dart pub get
+ ---> Running in 0b299b9ae39e
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 85.0.0 (94.0.0 available)
+  analyzer 7.7.1 (10.0.2 available)
+  js 0.7.1 (0.7.2 available)
+  matcher 0.12.17 (0.12.18 available)
+  meta 1.18.0 (1.18.1 available)
+  source_span 1.10.1 (1.10.2 available)
+  test 1.26.3 (1.29.0 available)
+  test_api 0.7.7 (0.7.9 available)
+  test_core 0.6.12 (0.6.15 available)
+  very_good_analysis 5.1.0 (10.1.0 available)
+Got dependencies!
+10 packages have newer versions incompatible with dependency constraints.
+Try `dart pub outdated` for more information.
+Removing intermediate container 0b299b9ae39e
+ ---> 47125baff1f5
+Step 5/12 : COPY . .
+ ---> 5a0378661886
+Step 6/12 : RUN dart pub get --offline
+ ---> Running in 8c293790df93
+Resolving dependencies...
+Downloading packages...
+Got dependencies!
+Removing intermediate container 8c293790df93
+ ---> 74a6c96479d5
+Step 7/12 : RUN dart compile exe bin/server.dart -o bin/server
+ ---> Running in de5801dafba9
+Generated: /app/bin/server
+Removing intermediate container de5801dafba9
+ ---> d32654a1a368
+Step 8/12 : FROM scratch
+ ---> 
+Step 9/12 : COPY --from=build /runtime/ /
+ ---> d8f70ebac103
+Step 10/12 : COPY --from=build /app/bin/server /app/bin/
+ ---> d3f3d6b8acb6
+Step 11/12 : COPY --from=build /app/public /public/
+ ---> ae2dd7e4c24d
+Step 12/12 : CMD ["/app/bin/server"]
+ ---> Running in f39a06ed7364
+Removing intermediate container f39a06ed7364
+ ---> f835856a7683
+Successfully built f835856a7683
+Successfully tagged dart-frog:latest
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ docker images
+REPOSITORY                        TAG             IMAGE ID       CREATED          SIZE
+dart-frog                         latest          f835856a7683   13 seconds ago   11.5MB
+<none>                            <none>          d32654a1a368   19 seconds ago   877MB
+dart                              stable          c22bbd8e7f3c   5 days ago       787MB
+mysql                             latest          2aa51c1d154a   2 weeks ago      922MB
+redis                             latest          63e868dc880e   3 weeks ago      139MB
+httpd                             2.4             0de612e99135   12 months ago    148MB
+spring/rest-mvc                   latest          2eae1dcc27eb   21 months ago    375MB
+postgres                          latest          0e536f047d0f   21 months ago    447MB
+portainer/portainer-ce            latest          a3f85c245ec3   21 months ago    293MB
+portainer/helper-reset-password   latest          9e9c190eda3a   22 months ago    43.5MB
+mcr.microsoft.com/mssql/server    2019-latest     376667ae3d77   22 months ago    1.48GB
+alpine                            latest          05455a08881e   2 years ago      7.38MB
+mcr.microsoft.com/mssql/server    2017-latest     19d34f261156   2 years ago      1.33GB
+openjdk                           17-jdk-alpine   264c9bdce361   4 years ago      326MB
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ docker run -p 8080:8080 -d --n
+--name            --network         --network-alias   --no-healthcheck  
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ docker run -p 8080:8080 -d --name dart-frog-server dart
+dart              dart-frog         dart-frog:latest  dart:stable       
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ docker run -p 8080:8080 -d --name dart-frog-server dart-frog
+4b1e8246da335ec2c7987a467766fc7d364b06578ae7c0a61ff4184d2498af3c
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ docker ps -a
+CONTAINER ID   IMAGE                                        COMMAND                  CREATED          STATUS                    PORTS                                                                                            NAMES
+4b1e8246da33   dart-frog                                    "/app/bin/server"        10 seconds ago   Up 7 seconds              0.0.0.0:8080->8080/tcp, :::8080->8080/tcp                                                        dart-frog-server
+15423f6ae564   redis:latest                                 "docker-entrypoint.s…"   2 weeks ago      Exited (0) 6 days ago                                                                                                      redis-server
+e9263df6c341   portainer/portainer-ce:latest                "/portainer"             20 months ago    Up 2 hours                0.0.0.0:8000->8000/tcp, :::8000->8000/tcp, 0.0.0.0:9443->9443/tcp, :::9443->9443/tcp, 9000/tcp   portainer
+d8270c2386fb   mcr.microsoft.com/mssql/server:2017-latest   "/opt/mssql/bin/nonr…"   21 months ago    Exited (137) 6 days ago                                                                                                    sql-server
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ docker ps -a
+CONTAINER ID   IMAGE                                        COMMAND                  CREATED          STATUS                    PORTS                                                                                            NAMES
+4b1e8246da33   dart-frog                                    "/app/bin/server"        33 seconds ago   Up 30 seconds             0.0.0.0:8080->8080/tcp, :::8080->8080/tcp                                                        dart-frog-server
+15423f6ae564   redis:latest                                 "docker-entrypoint.s…"   2 weeks ago      Exited (0) 6 days ago                                                                                                      redis-server
+e9263df6c341   portainer/portainer-ce:latest                "/portainer"             20 months ago    Up 2 hours                0.0.0.0:8000->8000/tcp, :::8000->8000/tcp, 0.0.0.0:9443->9443/tcp, :::9443->9443/tcp, 9000/tcp   portainer
+d8270c2386fb   mcr.microsoft.com/mssql/server:2017-latest   "/opt/mssql/bin/nonr…"   21 months ago    Exited (137) 6 days ago                                                                                                    sql-server
+ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ 
