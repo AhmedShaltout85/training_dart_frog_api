@@ -99,3 +99,87 @@ CONTAINER ID   IMAGE                                        COMMAND             
 e9263df6c341   portainer/portainer-ce:latest                "/portainer"             20 months ago    Up 2 hours                0.0.0.0:8000->8000/tcp, :::8000->8000/tcp, 0.0.0.0:9443->9443/tcp, :::9443->9443/tcp, 9000/tcp   portainer
 d8270c2386fb   mcr.microsoft.com/mssql/server:2017-latest   "/opt/mssql/bin/nonr…"   21 months ago    Exited (137) 6 days ago                                                                                                    sql-server
 ahmedshaltout@desktop:~/Desktop/TRAINING_APPS/dart-frog-api-training/training_dart_frog_api/build$ 
+
+
+final redis = RedisClient(REDIS(host: 'redis-server', port: 6379));
+
+
+docker-compose up -d
+
+# Check if containers are on the same network
+docker network inspect app-network
+
+# Test connection from Dart Frog container to Redis
+docker exec dart-frog-server ping redis-server
+# or
+docker exec dart-frog-server nc -zv redis-server 6379
+
+
+Update your Dart Frog code to connect to Redis using the IP address 172.17.0.4 instead of localhost:
+
+dart
+// In your Dart Frog code
+final redis = RedisClient(REDIS(host: '172.17.0.4', port: 6379));
+Or use the container name redis-server (this only works if containers are on the same custom network):
+
+dart
+// This might work if containers can resolve names
+final redis = RedisClient(REDIS(host: 'redis-server', port: 6379));
+Better Solution: Create a Custom Network
+Since you're using the default bridge network (docker0), containers can't resolve each other by name. Here's how to fix it properly:
+
+1. Create a custom network
+bash
+docker network create app-network
+2. Stop and remove existing containers
+bash
+docker stop dart-frog-server redis-server
+docker rm dart-frog-server redis-server
+3. Run Redis in the custom network
+bash
+docker run -d \
+  --name redis-server \
+  --network app-network \
+  redis:alpine
+4. Run your Dart Frog app in the same network
+bash
+docker run -d \
+  -p 8080:8080 \
+  --name dart-frog-server \
+  --network app-network \
+  dart-frog
+5. Update your Dart code to use the container name
+dart
+// Now you can use the container name directly
+final redis = RedisClient(REDIS(host: 'redis-server', port: 6379));
+Alternative: Use Docker Compose (Recommended)
+Create a docker-compose.yml file:
+
+yaml
+version: '3.8'
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  dart-frog:
+    build: .
+    container_name: dart-frog-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis-server
+      - REDIS_PORT=6379
+
+volumes:
+  redis_data:
+Then run:
+
+bash
+docker-compose up -d

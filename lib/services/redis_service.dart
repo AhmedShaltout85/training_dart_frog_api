@@ -5,13 +5,13 @@ import 'dart:convert';
 
 /// Redis service
 class RedisService {
+  factory RedisService() => _instance;
+  RedisService._internal();
   RedisConnection? _connection;
   Command? _command;
   bool _isConnected = false;
 
   static final RedisService _instance = RedisService._internal();
-  factory RedisService() => _instance;
-  RedisService._internal();
 
   /// Connect to Redis
   Future<void> connect({
@@ -102,8 +102,11 @@ class RedisService {
   // ==================== JSON Operations ====================
 
   /// Set JSON data
-  Future<void> setJson(String key, Map<String, dynamic> data,
-      {int? expirySeconds,}) async {
+  Future<void> setJson(
+    String key,
+    Map<String, dynamic> data, {
+    int? expirySeconds,
+  }) async {
     _ensureConnected();
     final jsonString = jsonEncode(data);
 
@@ -135,8 +138,11 @@ class RedisService {
   }
 
   /// Set JSON list
-  Future<void> setJsonList(String key, List<Map<String, dynamic>> data,
-      {int? expirySeconds,}) async {
+  Future<void> setJsonList(
+    String key,
+    List<Map<String, dynamic>> data, {
+    int? expirySeconds,
+  }) async {
     _ensureConnected();
     final jsonString = jsonEncode(data);
 
